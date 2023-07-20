@@ -42,6 +42,11 @@
 					<input type="text" v-model="formData.email" />
 				</template>
 			</uni-list-item>
+      <uni-list-item title="测试息屏自动唤醒" clickable @click="testRouse">
+				<template slot="footer">
+					<view class="list-item-subtitle">点击开启</view>
+				</template>
+			</uni-list-item>
 			<uni-section title="【上班】自动打卡时间"></uni-section>
 			<uni-list-item title="【上班】打卡起始时间" clickable @click="gotoStartTimerPickerConfig.show=true">
 				<template slot="footer">
@@ -131,10 +136,12 @@
 </template>
 
 <script>
+	import uniPlugin from '@/common/util/uni-plugin.js'
 	import { pushMessageEmail } from '@/serve/api/push-message.js'
 	let systemInfo = uni.getSystemInfoSync();
 	const openSourceUrl = 'https://github.com/SmileZXLee/uni-dingTalkHelper';
 	const qqGroupUrl = 'https://jq.qq.com/?_wv=1027&k=vU2fKZZH';
+	const { autojs } = require('robot-tools');
 	export default {
 		data() {
 			return {
@@ -175,7 +182,8 @@
 				screenStatus: 'hide',
 				formData: {
 					email: 'caiyx0666@163.com'
-				}
+				},
+				uniPlugin
 			}
 		},
 		computed: {
@@ -221,6 +229,7 @@
 		},
 		onLoad() {
 			// #ifdef APP-PLUS
+			this.initRobot()
 			uni.setKeepScreenOn({
 				keepScreenOn: true
 			});
@@ -270,7 +279,7 @@
 		},
 		onHide() {
 			this.screenStatus = 'hide'
-      pushMessageEmail({
+			pushMessageEmail({
 				subject: '钉钉打卡助手-应用隐藏',
 				text: "应用隐藏了~", // 文本内容
 				html: "", // html 内容, 如果设置了html内容, 将忽略text内容
@@ -281,7 +290,59 @@
 				console.log('err: ', err)
 			})
 		},
+		beforeDestroy() {
+			clearInterval(this.rouseTimer)
+			this.rouseTimer = null
+		},
 		methods: {
+			pushMessageEmail,
+			// 初始化robot
+			initRobot() {
+				const param = {
+				    file: 'rouse.js', //[必选],脚本(static/robots/rouse.js)，或绝对路径/sdcard/xxx.js，或远程URL(也可以用发布的打包加密代码)
+				    vue:  this, // 可选, 将本vue对象传递给脚本
+				    arguments: {}, //可选, json,传递给脚本的参数。[提示]如果不传递，则系统会默认使用'当时'的vue的data数据；
+				    onMessage: ()=>{}, //可选,回调函数，脚本给VUE发送消息， 感觉快淘汰了
+				    start: ()=>{}, //可选,脚本启动事件
+				    finish: ()=>{}, //可选,脚本执行完毕事件
+				    fail: ()=>{}, //可选,脚本发生意外事件
+				}
+				//仅设置初始化参数，不执行代码
+				autojs.init(param);
+			},
+			// 测试唤醒屏幕
+			testRouse() {
+				uniPlugin.toast('息屏情况下10秒钟之后唤醒屏幕')
+				const param = {
+				    file: 'rouse.js', //[必选],脚本(static/robots/rouse.js)，或绝对路径/sdcard/xxx.js，或远程URL(也可以用发布的打包加密代码)
+				    vue:  this, // 可选, 将本vue对象传递给脚本
+				    arguments: {}, //可选, json,传递给脚本的参数。[提示]如果不传递，则系统会默认使用'当时'的vue的data数据；
+				    onMessage: ()=>{}, //可选,回调函数，脚本给VUE发送消息， 感觉快淘汰了
+				    start: ()=>{}, //可选,脚本启动事件
+				    finish: ()=>{}, //可选,脚本执行完毕事件
+				    fail: ()=>{}, //可选,脚本发生意外事件
+				}
+				autojs.start(param);
+			},
+			/**
+			 * 规定范围内定时检查屏幕是否亮起，未亮起的情况下亮起屏幕
+			 * */
+			rouseFn() {
+				this.rouseTimer = setInterval(() => {
+					if(this.screenStatus === 'hide') {
+						const param = {
+							file: 'rouse.js', //[必选],脚本(static/robots/rouse.js)，或绝对路径/sdcard/xxx.js，或远程URL(也可以用发布的打包加密代码)
+							vue:  this, // 可选, 将本vue对象传递给脚本
+							arguments: {}, //可选, json,传递给脚本的参数。[提示]如果不传递，则系统会默认使用'当时'的vue的data数据；
+							onMessage: ()=>{}, //可选,回调函数，脚本给VUE发送消息， 感觉快淘汰了
+							start: ()=>{}, //可选,脚本启动事件
+							finish: ()=>{}, //可选,脚本执行完毕事件
+							fail: ()=>{}, //可选,脚本发生意外事件
+						}
+						autojs.start(param);
+					}
+				}, 20 * 1000)
+			},
 			sendEmail() {
 				pushMessageEmail({
 					subject: '钉钉打卡助手-测试',
@@ -368,18 +429,16 @@
 			},
 			timerRun() {
 				const currentTime = this.$utils.getDateForYYMMDDHHMMSS();
-				// console.log('currentTime: ' + currentTime)
-				// console.log('gotoTime: ' + this.gotoTime)
-				// console.log('gooffTime: ' + this.gooffTime)
-				// console.log(this.checkRandomRange(new Date()), this.screenStatus === 'hide')
-				// console.log(this.checkRandomRange(new Date()) && this.screenStatus === 'hide')
-				// if(this.checkRandomRange(new Date()) && this.screenStatus === 'hide') {
-				// 	setTimeout(() => {
-				// 		console.log('打开应用----------')
-				// 		// plus.runtime.restart()
-						
-				// 	}, 5000)
-				// }
+				console.log('currentTime: ' + currentTime)
+				console.log('gotoTime: ' + this.gotoTime)
+				console.log('gooffTime: ' + this.gooffTime)
+				console.log(this.checkRandomRange(new Date()), this.screenStatus === 'hide')
+				console.log(this.checkRandomRange(new Date()) && this.screenStatus === 'hide')
+				if(this.checkRandomRange(new Date())) {
+					if(!this.rouseTimer) {
+						this.rouseFn()
+					}
+				}
 				if (currentTime === this.gotoTime || currentTime === this.gooffTime) {
 					this.openDingtalkAndSave(currentTime);
 				}

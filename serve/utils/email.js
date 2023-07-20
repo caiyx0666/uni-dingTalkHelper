@@ -12,7 +12,7 @@ async function pushEmailMessage(sendInfo) {
     // secure: false, // true for 465, false for other ports
     auth: {
       user: '1601258964', // 发送方邮箱的账号
-      pass: '', // 邮箱授权密码
+      pass: 'rmbyuuiyolljijag', // 邮箱授权密码
     },
   });
 

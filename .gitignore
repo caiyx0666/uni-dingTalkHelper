@@ -8,4 +8,5 @@ thumbs.db
 !.gitkeep
 unpackage/*
 /uni-dingTalkHelper/unpackage
+/uni-dingTalkHelper/node_modules
 /serve/node_modules
