@@ -1,6 +1,6 @@
 {
     "name" : "钉钉打卡助手",
-    "appid" : "__UNI__EBAF4AA",
+    "appid" : "__UNI__EE84A85",
     "description" : "",
     "versionName" : "1.0.1",
     "versionCode" : 101,
@@ -54,7 +54,8 @@
             /* ios打包配置 */
             "ios" : {
                 "urlschemewhitelist" : [ "dingtalk" ],
-                "UIBackgroundModes" : "audio"
+                "UIBackgroundModes" : "audio",
+                "dSYMs" : false
             },
             /* SDK配置 */
             "sdkConfigs" : {

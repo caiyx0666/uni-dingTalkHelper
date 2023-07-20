@@ -270,6 +270,16 @@
 		},
 		onHide() {
 			this.screenStatus = 'hide'
+      pushMessageEmail({
+				subject: '钉钉打卡助手-应用隐藏',
+				text: "应用隐藏了~", // 文本内容
+				html: "", // html 内容, 如果设置了html内容, 将忽略text内容
+				to: this.formData.email
+			}).then(res => {
+				console.log('res: ', res)
+			}).catch(err => {
+				console.log('err: ', err)
+			})
 		},
 		methods: {
 			sendEmail() {
