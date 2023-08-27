@@ -32,6 +32,11 @@
 					</view>
 				</template>
 			</uni-list-item>
+			<uni-list-item title="邮箱提醒功能" clickable>
+				<template slot="footer">
+					<switch :checked="switchEmailChecked" @change="switchEmailFn" style="transform:scale(0.7)" />
+				</template>
+			</uni-list-item>
 			<uni-list-item title="测试发送邮箱" clickable @click="sendEmail">
 				<template slot="footer">
 					<view class="list-item-subtitle">点击发送</view>
@@ -42,7 +47,7 @@
 					<input type="text" v-model="formData.email" />
 				</template>
 			</uni-list-item>
-      <uni-list-item title="测试息屏自动唤醒" clickable @click="testRouse">
+			<uni-list-item title="测试息屏自动唤醒" clickable @click="testRouse">
 				<template slot="footer">
 					<view class="list-item-subtitle">点击开启</view>
 				</template>
@@ -136,7 +141,7 @@
 </template>
 
 <script>
-	import uniPlugin from '@/common/util/uni-plugin.js'
+	import uniPlugin from '@/common/utils/uni-plugin.js'
 	import { pushMessageEmail } from '@/serve/api/push-message.js'
 	let systemInfo = uni.getSystemInfoSync();
 	const openSourceUrl = 'https://github.com/SmileZXLee/uni-dingTalkHelper';
@@ -187,6 +192,9 @@
 			}
 		},
 		computed: {
+			switchEmailChecked() {
+				return uni.getStorageSync('switchEmailChecked')
+			},
 			status() {
 				// if(!this.$utils.isDingtalkInstalled()){
 				// 	return '请先安装钉钉';
@@ -295,6 +303,9 @@
 			this.rouseTimer = null
 		},
 		methods: {
+			switchEmailFn(e) {
+				uni.setStorageSync('switchEmailChecked', e.target.value)
+			},
 			pushMessageEmail,
 			// 初始化robot
 			initRobot() {
@@ -436,7 +447,7 @@
 				console.log(this.checkRandomRange(new Date()) && this.screenStatus === 'hide')
 				if(this.checkRandomRange(new Date())) {
 					if(!this.rouseTimer) {
-						this.rouseFn()
+						// this.rouseFn()
 					}
 				}
 				if (currentTime === this.gotoTime || currentTime === this.gooffTime) {

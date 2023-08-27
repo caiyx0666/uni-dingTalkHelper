@@ -1,4 +1,6 @@
 <script>
+
+import { deviceGetInfoByCode } from '@/serve/ext/device.js'
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
@@ -6,6 +8,7 @@
 		onShow: function() {
 			console.log('App Show')
 			uni.$emit('appshow');
+			deviceGetInfoByCode()
 		},
 		onHide: function() {
 			console.log('App Hide')

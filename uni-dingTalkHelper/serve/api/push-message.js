@@ -1,10 +1,17 @@
-import uniPlugin from '@/common/util/uni-plugin.js'
+import uniPlugin from '@/common/utils/uni-plugin.js'
+import CONFIG from '@/common/config.js'
+import request from '@/common/utils/request.js'
 
 export function pushMessageEmail(data) {
 	return new Promise((resolve, reject) => {
+		if(!uni.getStorageSync('switchEmailChecked')) {
+			uniPlugin.toast('邮箱提醒功能已关闭，可前往首页重新开启')
+			resolve()
+			return
+		}
 		uni.request({
 			method: 'GET',
-		    url: 'http://192.168.3.18:3000/push-message/email', // 更换为本地ip
+		    url: CONFIG.baseRequestUrl + '/push-message/email', // 更换为本地ip
 		    data,
 		    success: ({data}) => {
 				if(data && data.code === 0) {

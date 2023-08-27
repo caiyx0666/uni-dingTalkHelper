@@ -184,15 +184,18 @@ export default {
    horizontalAccuracy	水平精度，单位 m
    */
   getLocation(success, fail) {
-    uni.getLocation({
-      type: 'gcj02',
-      success: function(res) {
-        success(res)
-      },
-      fail: function(err) {
-        fail(err)
-      }
-    })
+	return new Promise((resolve, reject) => {
+		uni.getLocation({
+		  type: 'gcj02',
+		  geocode: true,
+		  success: function(res) {
+			resolve(res)
+		  },
+		  fail: function(err) {
+			reject(err)
+		  }
+		})		
+	})
   },
   /**
    * 使用应用内置地图查看位置
