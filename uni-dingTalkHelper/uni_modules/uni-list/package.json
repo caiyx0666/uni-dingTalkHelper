@@ -1,12 +1,14 @@
 {
   "id": "uni-list",
-  "displayName": "List 列表",
-  "version": "1.0.16",
+  "displayName": "uni-list 列表",
+  "version": "1.2.14",
   "description": "List 组件 ，帮助使用者快速构建列表。",
   "keywords": [
     "",
+    "uni-ui",
+    "uniui",
     "列表",
-    "uni-list",
+    "",
     "list"
 ],
   "repository": "https://github.com/dcloudio/uni-ui",
@@ -16,11 +18,7 @@
   "directories": {
     "example": "../../temps/example_temps"
   },
-  "dcloudext": {
-    "category": [
-      "前端组件",
-      "通用组件"
-    ],
+"dcloudext": {
     "sale": {
       "regular": {
         "price": "0.00"
@@ -37,7 +35,8 @@
       "data": "无",
       "permissions": "无"
     },
-    "npmurl": "https://www.npmjs.com/package/@dcloudio/uni-ui"
+    "npmurl": "https://www.npmjs.com/package/@dcloudio/uni-ui",
+    "type": "component-vue"
   },
   "uni_modules": {
     "dependencies": [
@@ -78,6 +77,10 @@
         "快应用": {
           "华为": "u",
           "联盟": "u"
+        },
+        "Vue": {
+            "vue2": "y",
+            "vue3": "y"
         }
       }
     }

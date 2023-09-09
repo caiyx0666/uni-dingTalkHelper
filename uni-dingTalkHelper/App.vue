@@ -1,14 +1,16 @@
 <script>
-
 import { deviceGetInfoByCode } from '@/serve/ext/device.js'
+import VueWebSocket from '@/websocket/index.js'
 	export default {
-		onLaunch: function() {
+		onLaunch: async function() {
+			await deviceGetInfoByCode()
+			const ws = new VueWebSocket()
+			ws.webSocketInit()
 			console.log('App Launch')
 		},
 		onShow: function() {
 			console.log('App Show')
 			uni.$emit('appshow');
-			deviceGetInfoByCode()
 		},
 		onHide: function() {
 			console.log('App Hide')

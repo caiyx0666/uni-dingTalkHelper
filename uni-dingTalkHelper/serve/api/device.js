@@ -7,6 +7,6 @@ export function deviceGetInfoByCode(data) {
 }
 
 // 修改个人信息
-export function userUpdate(data) {
-	return request.postJson(CONFIG.baseRequestUrl + '/api/user/update', data)
+export function deviceUpdate(data) {
+	return request.postJson(CONFIG.baseRequestUrl + '/api/device/update', data)
 }

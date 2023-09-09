@@ -187,6 +187,7 @@ export default {
 	return new Promise((resolve, reject) => {
 		uni.getLocation({
 		  type: 'gcj02',
+		  isHighAccuracy: true,
 		  geocode: true,
 		  success: function(res) {
 			resolve(res)
@@ -196,6 +197,37 @@ export default {
 		  }
 		})		
 	})
+  },
+  getLocationV2() {
+	return new Promise((resolve, reject) => {
+		uni.getLocation({
+		    type: 'wgs84',
+		    success: function(res) {
+		        console.log('当前位置的经度：' + res.longitude);
+		        console.log('当前位置的纬度：' + res.latitude);
+		        var point = new plus.maps.Point(res.longitude, res.latitude);
+		        plus.maps.Map.reverseGeocode(
+		            point,
+		            {},
+		            function(event) {
+		                var address = event.address; // 转换后的地理位置
+		                var point = event.coord; // 转换后的坐标信息
+		                var coordType = event.coordType; // 转换后的坐标系类型
+		                console.log(address, 'address');
+		                var reg = /.+?(省|市|自治区|自治州|县|区)/g;
+		                
+		                console.log(address.match(reg));
+		                const addressList=address.match(reg).toString().split(",");
+		                console.log(addressList[0]);
+		                console.log(addressList[1]);
+		                console.log(addressList[2]);
+		                
+		            },
+		            function(e) {}
+		        );
+		    }
+		});
+	})  
   },
   /**
    * 使用应用内置地图查看位置
@@ -221,9 +253,7 @@ export default {
    * @param success
    * @param fail
    */
-  chooseImage(count, sizeType, sourceType, success, fail) {
-    sizeType = sizeType.length > 0 ? sizeType : ['original', 'compressed']
-    sourceType = sourceType.length > 0 ? sourceType : ['camera', 'album']
+  chooseImage({ count = 1, sizeType = ['original', 'compressed'], sourceType = ['camera', 'album'], success = () => {}, fail = () => {} }) {
     uni.chooseImage({
       sizeType: sizeType, // 可以指定是原图还是压缩图，默认二者都有
       sourceType: sourceType, // 从相册选择

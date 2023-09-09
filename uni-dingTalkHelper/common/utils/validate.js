@@ -88,9 +88,9 @@ export default {
    */
   isNull(val) {
     val = this.trim(val)
-    if (val instanceof Array) {
+    if (Object.prototype.toString.call(val) === '[object Array]') {
       if (val.length === 0) return true
-    } else if (val instanceof Object) {
+    } else if (Object.prototype.toString.call(val) === '[object Object]') {
       if (JSON.stringify(val) === '{}') return true
     } else {
       if (val === 'null' || val == null || val === 'undefined' || val === undefined || val === '' || val === '[]' || val === '{}') return true

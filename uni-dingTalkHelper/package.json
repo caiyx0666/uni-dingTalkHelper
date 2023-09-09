@@ -7,7 +7,7 @@
   "dependencies": {
     "compressing": "^1.5.1",
     "request": "^2.88.2",
-    "robot-tools": "^1.0.24",
-    "webpack": "^5.4.0"
+    "robot-tools": "^1.1.37",
+    "webpack": "^5.88.2"
   }
 }
