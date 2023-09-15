@@ -1,28 +1,62 @@
 auto();
+log(app.vue.screenStatus)
 //setScreenMetrics(1080, 1920);
+(function timerFn() {
+  if (isRun()) {
+    runMainFn()
+  } else {
+	setTimeout(() => {
+	  timerFn()
+	}, 1000)
+  }
+})()
 
-//觉得碍眼，就注释掉这几行。（悬浮半透明日志窗口） 
-console.useNew();
-console.show(); //日志输出到屏幕
-log("十秒后打开钉钉");
-sleep(10 * 1000);
-if (device.isScreenOn()) {
-    log("屏幕开着");
-} else {
-    log("屏幕关着");
-    device.wakeUpIfNeeded(); // 唤醒设备
-    device.keepScreenOn(5 * 60 * 1000);
-    // device.wakeUp();
+// events.on("exit", () => {
+//   log("结束运行");
+//   log(app.vue.screenStatus)
+//   log(app.vue.ws.websocket.close())
+// });
+
+// 脚本主要方法
+function runMainFn() {
+  //觉得碍眼，就注释掉这几行。（悬浮半透明日志窗口） 
+  console.useNew();
+  console.show(); //日志输出到屏幕
+  sleep(10 * 1000);
+  if (device.isScreenOn()) {
+      log("屏幕开着");
+  } else {
+      log("屏幕关着");
+      device.wakeUpIfNeeded(); // 唤醒设备
+      device.keepScreenOn(5 * 60 * 1000);
+      // device.wakeUp();
+  }
+  sleep(3000);
+  // swipe(1, 1, 10, 10, 100);
+  // slidingByLine();
+  swipe(500, 1000, 500, 500, 500);
+
+
+  log(isDeviceLocked())
+  if (isDeviceLocked()) {
+    unlockScreen()
+  }
+
+  log("执行结束");
 }
-sleep(3000);
-// swipe(1, 1, 10, 10, 100);
-// slidingByLine();
-swipe(500, 1000, 500, 500, 500);
 
-
-log(isDeviceLocked())
-if (isDeviceLocked()) {
-	unlockScreen()
+// 是否到指定执行时间（每周一到周五 早上8点40到9点）
+function isRun() {
+  var date = new Date()
+  var day = date.getDay() // 星期
+  var house = date.getHours() // 小时
+  var min = date.getMinutes() // 分钟
+  log('现在是星期' + day + ' ' + house + '小时' + min + '分钟')
+  if ((day === 1 || day === 2 || day === 3 || day === 4 || day === 5) && house === 17 && min >= 19) {
+    return true
+  } else {
+    return false
+  }
 }
 
 // 解锁屏幕
@@ -52,7 +86,7 @@ function unlockScreen() {
 			html: "", // html 内容, 如果设置了html内容, 将忽略text内容
 			to: app.vue.formData.email
 		})
-	    log("上滑解锁失败")
+    log("上滑解锁失败")
 		unlockScreen()
 	} else {
 		app.vue.pushMessageEmail({
@@ -61,18 +95,18 @@ function unlockScreen() {
 			html: "", // html 内容, 如果设置了html内容, 将忽略text内容
 			to: app.vue.formData.email
 		})
+    rouseApp()
 	}
 }
 
-// log("准备执行钉钉");
-// var startFlag = launchApp("钉钉");
-// if (startFlag) {
-//     log("启动成功");
-// } else {
-//     log("启动失败");
-// }
-
-log("执行结束");
+function rouseApp() {
+  var startFlag = launchApp("钉钉打卡助手");
+  if (!startFlag) {
+    setTimeout(() => {
+      rouseApp()
+    }, 1000)
+  }
+}
 
 function isDeviceLocked() {
     importClass(android.app.KeyguardManager)
