@@ -3,7 +3,8 @@ import validate from '@/common/utils/validate.js'
 import receiveMessageList from './receive/index'
 
 const { LOGIN_CMD, PING_CMD } = chatCmd
-const ws_ctx = 'ws://192.168.31.127:3001'
+const ws_ctx = 'ws://192.168.3.18:3001'
+// const ws_ctx = 'ws://192.168.31.127:3001'
 
 export default class VueWebSocket {
   handlerList = []
@@ -33,6 +34,7 @@ export default class VueWebSocket {
    * ws初始化
    */
   webSocketInit() {
+	const deviceInfo = uni.getStorageSync('deviceInfo') || {}
     // #ifdef H5
     if (typeof (WebSocket) === 'undefined') {
       console.log("您的浏览器不支持WebSocket，无法获取数据");
@@ -54,7 +56,7 @@ export default class VueWebSocket {
     try {
       this.initHandlerList()
       // #ifdef H5
-      this.webSocket = new WebSocket(ws_ctx);
+      this.webSocket = new WebSocket(ws_ctx + `?id=${deviceInfo.id}`);
       this.webSocket.onopen = this.webSocketHandleOpen.bind(this);
       this.webSocket.onerror = this.webSocketHandleError.bind(this);
       this.webSocket.onmessage = this.webSocketHandleMessage.bind(this);
@@ -63,7 +65,7 @@ export default class VueWebSocket {
 
       // #ifndef H5
       this.webSocket = uni.connectSocket({
-        url: ws_ctx,
+        url: ws_ctx + `?id=${deviceInfo.id}`,
         success: (data) => {
           console.log("websocket连接成功", data);
           console.log('this.webSocket-------------', this.webSocket)
@@ -147,6 +149,7 @@ export default class VueWebSocket {
     const payload = {
       cmd: LOGIN_CMD,
       data: {
+		onLineStatus: 1,
 		id: deviceInfo.id,
 		code: deviceInfo.code
       }

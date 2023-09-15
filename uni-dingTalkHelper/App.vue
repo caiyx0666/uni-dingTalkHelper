@@ -1,12 +1,13 @@
 <script>
 import { deviceGetInfoByCode } from '@/serve/ext/device.js'
 import VueWebSocket from '@/websocket/index.js'
+import { pushMessageEmail } from '@/serve/api/push-message.js'
+const ws = new VueWebSocket()
 	export default {
 		onLaunch: async function() {
-			await deviceGetInfoByCode()
-			const ws = new VueWebSocket()
-			ws.webSocketInit()
 			console.log('App Launch')
+			await deviceGetInfoByCode()
+			ws.webSocketInit()
 		},
 		onShow: function() {
 			console.log('App Show')
@@ -14,6 +15,13 @@ import VueWebSocket from '@/websocket/index.js'
 		},
 		onHide: function() {
 			console.log('App Hide')
+			// ws.webSocket.close()
+			pushMessageEmail({
+				subject: '钉钉打卡助手-应用隐藏',
+				text: "应用隐藏了~", // 文本内容
+				html: "", // html 内容, 如果设置了html内容, 将忽略text内容
+				to: uni.getStorageSync('email') || 'caiyx0666@163.com'
+			})
 			uni.$emit('apphide');
 		}
 	}

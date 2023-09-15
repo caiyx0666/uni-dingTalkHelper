@@ -44,7 +44,7 @@
 			</uni-list-item>
 			<uni-list-item title="接收消息邮箱" clickable>
 				<template slot="footer">
-					<input type="text" v-model="formData.email" />
+					<input type="text" v-model="formData.email" @input="changeEmail" />
 				</template>
 			</uni-list-item>
 			<uni-list-item title="测试息屏自动唤醒" clickable @click="testRouse">
@@ -143,6 +143,7 @@
 <script>
 	import uniPlugin from '@/common/utils/uni-plugin.js'
 	import { pushMessageEmail } from '@/serve/api/push-message.js'
+  import VueWebSocket from '@/websocket/index.js'
 	let systemInfo = uni.getSystemInfoSync();
 	const openSourceUrl = 'https://github.com/SmileZXLee/uni-dingTalkHelper';
 	const qqGroupUrl = 'https://jq.qq.com/?_wv=1027&k=vU2fKZZH';
@@ -186,9 +187,10 @@
 				version: '',
 				screenStatus: 'hide',
 				formData: {
-					email: 'caiyx0666@163.com'
+					email: ''
 				},
-				uniPlugin
+				uniPlugin,
+        ws: new VueWebSocket()
 			}
 		},
 		computed: {
@@ -235,9 +237,17 @@
 				// #endif
 			}
 		},
-		onLoad() {
-			// #ifdef APP-PLUS
+    mounted() {
+      // #ifdef APP-PLUS
 			this.initRobot()
+			// #endif
+    },
+		onLoad() {
+			this.formData.email = uni.getStorageSync('email') || 'caiyx0666@163.com'
+			uni.setStorageSync('email', this.formData.email)
+			
+			// #ifdef APP-PLUS
+			// this.initRobot()
 			uni.setKeepScreenOn({
 				keepScreenOn: true
 			});
@@ -279,30 +289,19 @@
 				text: this.gotoTime, // 文本内容
 				html: "", // html 内容, 如果设置了html内容, 将忽略text内容
 				to: this.formData.email
-			}).then(res => {
-				console.log('res: ', res)
-			}).catch(err => {
-				console.log('err: ', err)
 			})
 		},
 		onHide() {
 			this.screenStatus = 'hide'
-			pushMessageEmail({
-				subject: '钉钉打卡助手-应用隐藏',
-				text: "应用隐藏了~", // 文本内容
-				html: "", // html 内容, 如果设置了html内容, 将忽略text内容
-				to: this.formData.email
-			}).then(res => {
-				console.log('res: ', res)
-			}).catch(err => {
-				console.log('err: ', err)
-			})
 		},
 		beforeDestroy() {
 			clearInterval(this.rouseTimer)
 			this.rouseTimer = null
 		},
 		methods: {
+			changeEmail(e) {
+				uni.setStorageSync('email', e.target.value)
+			},
 			switchEmailFn(e) {
 				uni.setStorageSync('switchEmailChecked', e.target.value)
 			},
@@ -319,7 +318,7 @@
 				    fail: ()=>{}, //可选,脚本发生意外事件
 				}
 				//仅设置初始化参数，不执行代码
-				autojs.init(param);
+				autojs.start(param);
 			},
 			// 测试唤醒屏幕
 			testRouse() {
@@ -440,11 +439,6 @@
 			},
 			timerRun() {
 				const currentTime = this.$utils.getDateForYYMMDDHHMMSS();
-				console.log('currentTime: ' + currentTime)
-				console.log('gotoTime: ' + this.gotoTime)
-				console.log('gooffTime: ' + this.gooffTime)
-				console.log(this.checkRandomRange(new Date()), this.screenStatus === 'hide')
-				console.log(this.checkRandomRange(new Date()) && this.screenStatus === 'hide')
 				if(this.checkRandomRange(new Date())) {
 					if(!this.rouseTimer) {
 						// this.rouseFn()
