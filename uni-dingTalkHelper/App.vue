@@ -1,13 +1,10 @@
 <script>
 import { deviceGetInfoByCode } from '@/serve/ext/device.js'
-import VueWebSocket from '@/websocket/index.js'
 import { pushMessageEmail } from '@/serve/api/push-message.js'
-const ws = new VueWebSocket()
 	export default {
 		onLaunch: async function() {
 			console.log('App Launch')
 			await deviceGetInfoByCode()
-			ws.webSocketInit()
 		},
 		onShow: function() {
 			console.log('App Show')

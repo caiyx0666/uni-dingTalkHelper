@@ -1,5 +1,7 @@
 import CONFIG from '@/common/config.js'
+import request from '@/common/utils/request.js'
 import uniPlugin from '@/common/utils/uni-plugin.js'
+
 export function uploadFile(filePath) {
 	return new Promise((resolve, reject) => {
 		uni.uploadFile({
@@ -9,7 +11,7 @@ export function uploadFile(filePath) {
 		  name: 'file',
 		  header: {},
 		  formData: {
-			  groupId: 'capture'
+			  groupId: 1
 		  },
 		  success(uploadFileRes) {
 			const res = uploadFileRes.data ? JSON.parse(uploadFileRes.data) : {}
@@ -27,4 +29,10 @@ export function uploadFile(filePath) {
 		  }
 		})		
 	})
+}
+
+
+// 修改个人信息
+export function uploadBase64(data) {
+	return request.postJson(CONFIG.baseRequestUrl + '/api/upload/base64', data)
 }

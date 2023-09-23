@@ -27,6 +27,16 @@
         },
         /* 应用发布信息 */
         "distribute" : {
+            "apple": {
+                "urltypes": [  
+                    {  
+                        "urlidentifier":"com.caiym.android.dingtalkhelper",  
+                        "urlschemes": [  
+                            "dingtalkhelper"
+                        ]  
+                    }  
+                ]
+            },
             /* android打包配置 */
             "android" : {
                 "permissions" : [
@@ -47,13 +57,14 @@
                     "request" : "none",
                     "prompt" : ""
                 },
-                "schemes" : "hbuildx"
+                "schemes" : "dingtalkhelper"
             },
             /* ios打包配置 */
             "ios" : {
-                "urlschemewhitelist" : [ "dingtalk" ],
+                "urlschemewhitelist" : [ "dingtalkhelper" ],
                 "UIBackgroundModes" : "audio",
-                "dSYMs" : false
+                "dSYMs" : false,
+                "urltypes" : "dingtalkhelper"
             },
             /* SDK配置 */
             "sdkConfigs" : {

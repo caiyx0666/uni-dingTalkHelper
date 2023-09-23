@@ -1,3 +1,5 @@
+const dingTalkHelperScheme = 'dingtalkhelper://';
+const dingTalkHelperPname = 'com.caiym.android.dingtalkhelper';
 const dingTalkScheme = 'dingtalk://';
 const dingTalkPname = 'com.alibaba.android.rimet';
 const weekStorageKey = "weekStorageKey";
@@ -9,6 +11,8 @@ const clockHistoryStorageKey = "clockHistoryStorageKey";
 const iosOpenedDingtalkKey = "iosOpenedDingtalkKey";
 const securityPwdKey = "securityPwdKey";
 module.exports = {
+	dingTalkHelperScheme: dingTalkHelperScheme,
+	dingTalkHelperPname: dingTalkHelperPname,
 	dingTalkScheme: dingTalkScheme,
 	dingTalkPname: dingTalkPname,
 	weekStorageKey: weekStorageKey,

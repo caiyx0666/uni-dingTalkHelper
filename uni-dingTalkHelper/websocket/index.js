@@ -33,7 +33,7 @@ export default class VueWebSocket {
   /**
    * ws初始化
    */
-  webSocketInit() {
+  webSocketInit(vue) {
 	const deviceInfo = uni.getStorageSync('deviceInfo') || {}
     // #ifdef H5
     if (typeof (WebSocket) === 'undefined') {
@@ -54,7 +54,7 @@ export default class VueWebSocket {
     this.webSocketWarningText = "连接断开,正在尝试重连";
     console.log("ws_ctx:", ws_ctx)
     try {
-      this.initHandlerList()
+      this.initHandlerList(vue)
       // #ifdef H5
       this.webSocket = new WebSocket(ws_ctx + `?id=${deviceInfo.id}`);
       this.webSocket.onopen = this.webSocketHandleOpen.bind(this);
@@ -203,10 +203,11 @@ export default class VueWebSocket {
     }
   }
 
-  initHandlerList() {
+  initHandlerList(vue) {
     this.handlerList = []
     receiveMessageList.forEach(item => {
-      this.handlerList.push(new item(this))
+	  item.prototype.ws = this
+      this.handlerList.push(new item(this, vue))
     })
   }
 

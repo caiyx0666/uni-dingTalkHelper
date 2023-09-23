@@ -1,13 +1,21 @@
 auto();
-log(app.vue.screenStatus)
+
+//请求截图
+if(!requestScreenCapture()){
+    toast("请求截图失败");
+    exit();
+}
+
 //setScreenMetrics(1080, 1920);
 (function timerFn() {
+  timerTaskFn()
+  // 到达指定时间范围 唤醒手机
   if (isRun()) {
     runMainFn()
   } else {
 	setTimeout(() => {
 	  timerFn()
-	}, 1000)
+	}, 10000)
   }
 })()
 
@@ -16,6 +24,24 @@ log(app.vue.screenStatus)
 //   log(app.vue.screenStatus)
 //   log(app.vue.ws.websocket.close())
 // });
+
+/** 脚本定时检查方法 */
+function timerTaskFn() {
+  // 是否进行截图
+  if(app.vue.isScreenCapture && app.vue.isScreenCapture === true) {
+	var img = captureScreen();
+	var base64Data = images.toBase64(img, 'png', 1)
+	app.vue.uploadBase64(base64Data)
+  }
+  
+  if(app.vue.isOpenDingtalkApp && app.vue.isOpenDingtalkApp === true) {
+  	rouseDingTalkApp()
+  }
+  
+  if(app.vue.isOpenCurApp && app.vue.isOpenCurApp === true) {
+  	rouseApp()
+  }
+}
 
 // 脚本主要方法
 function runMainFn() {
@@ -95,10 +121,21 @@ function unlockScreen() {
 			html: "", // html 内容, 如果设置了html内容, 将忽略text内容
 			to: app.vue.formData.email
 		})
-    rouseApp()
+		rouseApp()
 	}
 }
 
+// 打开钉钉
+function rouseDingTalkApp() {
+  var startFlag = launchApp("钉钉");
+  if (!startFlag) {
+    setTimeout(() => {
+      rouseApp()
+    }, 1000)
+  }
+}
+
+// 打开钉钉打卡助手
 function rouseApp() {
   var startFlag = launchApp("钉钉打卡助手");
   if (!startFlag) {

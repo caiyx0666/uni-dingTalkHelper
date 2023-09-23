@@ -46,7 +46,7 @@ export function getClientId() {
 	})
 }
 
-// 截屏
+// 截屏（当前app）
 export function capture() {
 	var pages = getCurrentPages();
 	var page = pages[pages.length - 1];
@@ -108,9 +108,24 @@ export function getHeadImage(imgUrl) {
     }
     return imgUrl
 }
+
 /**
  * 获取默认头像
  */
 export function getDefaultHeadImage(obj) {
     return config.file_ctx + 'avatar/24c59a5f25ac3b3fe6de02873470a5c1.png'
+}
+
+/**
+ * 遍历对象绑定到指定函数原型链上
+ * @param {*} fn 指定函数
+ * @param {*} obj 需要遍历的对象
+ */
+export function extend (fn, obj) {
+  if (!(fn instanceof Function)) {
+    throw('fn must be a Function')
+  }
+  Object.keys(obj).forEach(key => {
+    fn.prototype[key] = obj[key]
+  })
 }

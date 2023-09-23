@@ -2,6 +2,36 @@
 
 import config from '../config/index.js'
 
+// 回到当前应用
+function openCurApp(errback) {
+	return new Promise(function(resolve, reject) {
+		if (!isApp()) {
+			reject('请在App中运行！');
+		} else {
+			console.log('重启当前App')
+			plus.runtime.restart()
+			return
+			if (plus.os.name === 'Android') {
+				plus.runtime.launchApplication({
+					pname: config.dingTalkHelperPname
+				}, (err) => {
+					console.log('Android.err.message------------', err.message)
+					reject(err.message);
+				});
+				resolve();
+			} else if (plus.os.name === 'iOS') {
+				plus.runtime.launchApplication({
+					action: config.dingTalkHelperScheme
+				}, (err) => {
+					console.log('iOS.err.message------------', err.message)
+					reject(err.message);
+				});
+				resolve();
+			}
+		}
+	})
+}
+
 function openDingTalk(errback) {
 	return new Promise(function(resolve, reject) {
 		if (!isApp()) {
@@ -145,6 +175,7 @@ function fillZero2Two(value) {
 
 
 module.exports = {
+	openCurApp,
 	isApp,
 	openDingTalk,
 	isDingtalkInstalled,

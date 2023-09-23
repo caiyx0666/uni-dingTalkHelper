@@ -47,7 +47,7 @@
 					<input type="text" v-model="formData.email" @input="changeEmail" />
 				</template>
 			</uni-list-item>
-			<uni-list-item title="测试息屏自动唤醒" clickable @click="testRouse">
+			<uni-list-item title="重启autojs脚本" clickable @click="testRouse">
 				<template slot="footer">
 					<view class="list-item-subtitle">点击开启</view>
 				</template>
@@ -143,12 +143,21 @@
 <script>
 	import uniPlugin from '@/common/utils/uni-plugin.js'
 	import { pushMessageEmail } from '@/serve/api/push-message.js'
-  import VueWebSocket from '@/websocket/index.js'
+	import VueWebSocket from '@/websocket/index.js'
+	const ws = new VueWebSocket()
 	let systemInfo = uni.getSystemInfoSync();
 	const openSourceUrl = 'https://github.com/SmileZXLee/uni-dingTalkHelper';
 	const qqGroupUrl = 'https://jq.qq.com/?_wv=1027&k=vU2fKZZH';
 	const { autojs } = require('robot-tools');
+	import screenCaptureMixins from './robot-mixins/screen-capture'
+	import openDingtalkAppMixins from './robot-mixins/open-dingtalk-app.js'
+	import openCurAppMixins from './robot-mixins/open-cur-app.js'
 	export default {
+		mixins: [
+			screenCaptureMixins,
+			openDingtalkAppMixins,
+			openCurAppMixins
+		],
 		data() {
 			return {
 				show: true,
@@ -189,8 +198,7 @@
 				formData: {
 					email: ''
 				},
-				uniPlugin,
-        ws: new VueWebSocket()
+				uniPlugin
 			}
 		},
 		computed: {
@@ -237,11 +245,12 @@
 				// #endif
 			}
 		},
-    mounted() {
-      // #ifdef APP-PLUS
+		mounted() {
+			// #ifdef APP-PLUS
 			this.initRobot()
 			// #endif
-    },
+			ws.webSocketInit(this)
+		},
 		onLoad() {
 			this.formData.email = uni.getStorageSync('email') || 'caiyx0666@163.com'
 			uni.setStorageSync('email', this.formData.email)
@@ -309,7 +318,7 @@
 			// 初始化robot
 			initRobot() {
 				const param = {
-				    file: 'rouse.js', //[必选],脚本(static/robots/rouse.js)，或绝对路径/sdcard/xxx.js，或远程URL(也可以用发布的打包加密代码)
+				    file: 'rouse', //[必选],脚本(static/robots/rouse.js)，或绝对路径/sdcard/xxx.js，或远程URL(也可以用发布的打包加密代码)
 				    vue:  this, // 可选, 将本vue对象传递给脚本
 				    arguments: {}, //可选, json,传递给脚本的参数。[提示]如果不传递，则系统会默认使用'当时'的vue的data数据；
 				    onMessage: ()=>{}, //可选,回调函数，脚本给VUE发送消息， 感觉快淘汰了
@@ -319,10 +328,10 @@
 				}
 				//仅设置初始化参数，不执行代码
 				autojs.start(param);
+				autojs.menu.show(); //显示悬浮脚本图标
 			},
 			// 测试唤醒屏幕
 			testRouse() {
-				uniPlugin.toast('息屏情况下10秒钟之后唤醒屏幕')
 				const param = {
 				    file: 'rouse.js', //[必选],脚本(static/robots/rouse.js)，或绝对路径/sdcard/xxx.js，或远程URL(也可以用发布的打包加密代码)
 				    vue:  this, // 可选, 将本vue对象传递给脚本

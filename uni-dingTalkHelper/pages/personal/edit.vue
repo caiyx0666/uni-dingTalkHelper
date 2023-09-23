@@ -110,7 +110,7 @@ export default {
 				  name: 'file',
 				  header: {},
 				  formData: {
-					  groupId: 'avatar'
+					  groupId: 1
 				  },
 				  success: (uploadFileRes) => {
 					const res = uploadFileRes.data ? JSON.parse(uploadFileRes.data) : {}
